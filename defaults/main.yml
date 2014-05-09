@@ -6,7 +6,7 @@ nginx_server_name: "{{ nginx_base_domain }}"
 nginx_base_redirect_to_www: false
 
 nginx_upstream_name: testproject
-nginx_upstream_server: unix:///tmp/puma.sock
+nginx_upstream_server: unix:///var/run/puma.sock
 nginx_backend_name: puma
 
 nginx_root_path: /home/deploy/testproject.git/public
