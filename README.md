@@ -205,6 +205,10 @@ This is common for rails apps and apps developed with other web frameworks. With
 
 If your web application does not perform the above tasks then you should start doing them but if you're stubborn or do not have the ability to make this decision then set `nginx_assets_enabled` to false and write your own location block with `nginx_extra_locations`.
 
+## Ansible galaxy
+
+You can find it on the official [ansible galaxy](https://galaxy.ansible.com/list#/roles/856) if you want to rate it.
+
 ## License
 
 MIT
