@@ -1,0 +1,43 @@
+---
+nginx_listen: 80
+
+nginx_base_domain: "{{ ansible_fqdn }}"
+nginx_server_name: "{{ nginx_base_domain }}"
+nginx_base_redirect_to_www: false
+
+nginx_upstream_name: testproject
+nginx_upstream_server: unix:///tmp/puma.sock
+nginx_backend_name: puma
+
+nginx_root_path: /home/deploy/testproject.git/public
+nginx_assets_enabled: true
+nginx_assets_regex: ~ ^/(system|assets)/
+
+nginx_error_pages:
+  - { error_code: 404, error_page: 404.html }
+  - { error_code: 500, error_page: 500.html }
+  - { error_code: 502 503 504, error_page: 502.html }
+
+nginx_extra_locations:
+#  "/somewhere":
+#    - return;
+#  "/yay":
+#    - # directive 1 would go here;
+#    - # directive 2 would go here;
+#    - # ... add as many directives as you want;
+
+nginx_ssl: false
+nginx_listen_ssl: 443
+nginx_server_redirect_to_ssl: false
+
+nginx_ssl_type: selfsigned
+nginx_ssl_ciphers: "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4"
+nginx_ssl_ecdh_curve: secp384r1
+nginx_ssl_wildcard_domain: "{{ ansible_domain }}"
+nginx_ssl_strict_transport_header_age: 15768000
+nginx_ssl_session_cache: shared:SSL:10m
+nginx_ssl_session_timeout: 10m
+
+nginx_ssl_local_path: ~/dev/testproject/secrets/
+nginx_ssl_cert_name: sslcert.crt
+nginx_ssl_key_name: sslkey.key

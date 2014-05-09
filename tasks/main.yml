@@ -1,0 +1,48 @@
+---
+- name: ensure ansible's apt_repository dependency is installed
+  apt: pkg=python-apt state=latest update_cache=true cache_valid_time=86400
+
+- name: ensure nginx apt repository is up to date
+  apt_repository: repo='ppa:nginx/stable'
+
+- name: ensure nginx latest stable is installed
+  apt: pkg=nginx state=latest update_cache=true cache_valid_time=86400
+  notify:
+  - restart nginx
+
+- name: ensure the default site is removed
+  file: path=/etc/nginx/sites-{{ item }}/default state=absent
+  with_items:
+    - enabled
+    - available
+  notify:
+  - restart nginx
+
+- name: ensure nginx ssl directory is created
+  file: path=/etc/nginx/ssl state=directory
+  when: nginx_ssl
+
+- name: ensure nginx ssl certificate and key are created
+  copy: src="{{ nginx_ssl_local_path }}/{{ item }}" dest=/etc/nginx/ssl/{{ item }} mode=0600
+  with_items:
+    - "{{ nginx_ssl_cert_name }}"
+    - "{{ nginx_ssl_key_name }}"
+  when: nginx_ssl
+
+- name: ensure nginx is configured
+  template: src=nginx_conf.j2 dest=/etc/nginx/nginx.conf group=root owner=root
+  notify:
+  - reload nginx
+
+- name: ensure sites-available is configured
+  template: src=nginx_sites-available.conf.j2 dest=/etc/nginx/sites-available/testproj group=root owner=root
+  notify:
+  - reload nginx
+
+- name: ensure sites-available is symlinked to sites-enabled
+  file: src=/etc/nginx/sites-available/testproj dest=/etc/nginx/sites-enabled/testproj state=link
+  notify:
+  - restart nginx
+
+- name: ensure nginx starts on a fresh reboot
+  service: name=nginx state=started enabled=yes

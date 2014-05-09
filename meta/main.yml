@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Nick Janetakis
+  description: Install the latest stable version of nginx, configure sites-available and ssl.
+  company: 
+  license: license (MIT)
+  min_ansible_version: 1.5
+
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+
+  categories:
+  - system
+  - networking
+  - web
+
+dependencies: []
