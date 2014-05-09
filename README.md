@@ -23,7 +23,7 @@ Here is a feature list of this role:
   - Choose the ssl type
   - Pick the cipher and curve
   - Support and set the strict transport header with tweakable values
-  - Support session caching and times out with tweakable values
+  - Support session caching and timeout with tweakable values
 
 ## Role variables
 
@@ -141,15 +141,15 @@ nginx_base_redirect_to_www: true
 
 ## Example playbook with ssl
 
-First things first, make sure you read the section above because setting up the ssl version of this role is the same as the non-ssl version except it requires a few defaults to be changed.
+First things first, make sure you read the section above because setting up the ssl version of this role is the same as the non-ssl version except it requires a few more defaults to be changed.
 
 #### Do you need an ssl certificate and key?
 
 If you just want to mess around and ensure your server responds correctly to https requests then you can use self signed keys. The downside to using self signed keys is that users of your site will see a giant warning saying your domain cannot be trusted because the keys are not verified.
 
-This is absolutely fine for testing because you can just click the proceed anyways button and your site will work as planned.
+This is fine for testing because you can just click the proceed button and your site will work as planned.
 
-To generate your own self signed keys open a terminal and goto some directory, let's say `~/tmp`. Within this directory enter this command:
+To generate your own self signed keys, open a terminal and goto some directory, let's say `~/tmp`. Within this directory enter the following command:
 
 `$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout sslkey.key -out sslcert.crt`
 
@@ -171,7 +171,7 @@ nginx_ssl_local_path: PUT_YOUR_CERT_AND_KEY_PATH_HERE
 # If you are using a signed key from a trusted source then you need to also change:
 # nginx_ssl_type: signed
 
-# If your files are not called `sslcert.crt` and `sslkey.key` then overwrite them with the proper names:
+# If your files are not called `sslcert.crt` and `sslkey.key` then overwrite them:
 # nginx_ssl_cert_name: sslcert.crt
 # nginx_ssl_key_name: sslkey.key
 ```
