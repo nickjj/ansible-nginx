@@ -23,7 +23,7 @@
   when: nginx_ssl
 
 - name: ensure nginx ssl certificate and key are created
-  copy: src="{{ nginx_ssl_local_path }}/{{ item }}" dest=/etc/nginx/ssl/{{ item }} mode=0600
+  copy: src={{ nginx_ssl_local_path }}/{{ item }} dest=/etc/nginx/ssl/{{ item }} mode=0600
   with_items:
     - "{{ nginx_ssl_cert_name }}"
     - "{{ nginx_ssl_key_name }}"
