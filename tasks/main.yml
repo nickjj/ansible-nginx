@@ -28,6 +28,8 @@
     - "{{ nginx_ssl_cert_name }}"
     - "{{ nginx_ssl_key_name }}"
   when: nginx_ssl
+  notify:
+  - reload nginx
 
 - name: ensure nginx is configured
   template: src=nginx_conf.j2 dest=/etc/nginx/nginx.conf group=root owner=root
