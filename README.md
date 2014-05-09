@@ -45,7 +45,7 @@ nginx_base_redirect_to_www: false
 
 # What type of backend are you using and what is its location?
 nginx_upstream_name: testproject
-nginx_upstream_server: unix:///tmp/puma.sock
+nginx_upstream_server: unix:///var/run/puma.sock
 nginx_backend_name: puma
 
 # Where are your public files stored?
