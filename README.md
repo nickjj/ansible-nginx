@@ -199,7 +199,7 @@ Chances are you forgot a trailing semi-colon in one of the directives or some pa
 You can ssh into the server manually and run `$ sudo service nginx reload`. If it fails then you can be sure there is a syntax error somewhere.
 
 #### None of my assets are being updated
-I made an assumption that you are minifying, concatting and tagging each asset with an md5 of their contents as well as gzipping them with maximum compression before hand as part of your build process.
+I made an assumption that you are minifying, concatinating and tagging each asset with an md5 of their contents as well as gzipping them with maximum compression before hand as part of your build process.
 
 This is common for rails apps and apps developed with other web frameworks. With that said, I automatically set them to be cached for a year and turned `gzip_static on` for just those assets.
 
