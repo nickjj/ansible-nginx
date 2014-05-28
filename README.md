@@ -94,7 +94,7 @@ nginx_ssl_ciphers: "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECD
 # Best practice according to https://bettercrypto.org/.
 nginx_ssl_ecdh_curve: secp384r1
 
-# If you are using a wildcart certificate then which domain will be used?
+# If you are using a wildcard certificate then which domain will be used?
 nginx_ssl_wildcard_domain: "{{ ansible_domain }}"
 
 # http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
