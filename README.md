@@ -114,6 +114,9 @@ nginx_ssl_local_path: ~/dev/secrets/
 # What are the file names for both your cert and key?
 nginx_ssl_cert_name: sslcert.crt
 nginx_ssl_key_name: sslkey.key
+
+# The amount in seconds to cache apt-update.
+apt_cache_valid_time: 86400
 ```
 
 ## Example playbook without ssl

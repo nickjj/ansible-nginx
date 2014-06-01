@@ -41,3 +41,5 @@ nginx_ssl_session_timeout: 10m
 nginx_ssl_local_path: ~/dev/testproject/secrets/
 nginx_ssl_cert_name: sslcert.crt
 nginx_ssl_key_name: sslkey.key
+
+apt_cache_valid_time: 86400
