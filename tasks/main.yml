@@ -37,12 +37,12 @@
   - reload nginx
 
 - name: ensure sites-available is configured
-  template: src=nginx_sites-available.conf.j2 dest=/etc/nginx/sites-available/testproj group=root owner=root
+  template: src=nginx_sites-available.conf.j2 dest=/etc/nginx/sites-available/{{ nginx_upstream_name }} group=root owner=root
   notify:
   - reload nginx
 
 - name: ensure sites-available is symlinked to sites-enabled
-  file: src=/etc/nginx/sites-available/testproj dest=/etc/nginx/sites-enabled/testproj state=link
+  file: src=/etc/nginx/sites-available/{{ nginx_upstream_name }} dest=/etc/nginx/sites-enabled/{{ nginx_upstream_name }} state=link
   notify:
   - restart nginx
 
