@@ -18,13 +18,16 @@ nginx_error_pages:
   - { error_code: 500, error_page: 500.html }
   - { error_code: 502 503 504, error_page: 502.html }
 
-nginx_extra_locations:
-#  "/somewhere":
-#    - return;
-#  "/yay":
-#    - # directive 1 would go here;
-#    - # directive 2 would go here;
-#    - # ... add as many directives as you want;
+nginx_extra_locations: |
+#  location / {
+#    return;
+#  }
+#
+#  location ~ ^/(images|javascript|js|css|flash|media|static)/ {
+#    # directive 1 would go here;
+#    # directive 2 would go here;
+#    # ... add as many directives as you want;
+#  }
 
 nginx_ssl: false
 nginx_listen_ssl: 443

@@ -65,15 +65,18 @@ nginx_error_pages:
   - { error_code: 502 503 504, error_page: 502.html }
 
 # By default there are no extra locations but you can add as many as you want.
-# You may use a string or regex for each location key.
+# Don't forget the | to enable text blocks, feel free to use template tags too.
 # The values must be valid nginx syntax, don't forget the semi-colons!
-nginx_extra_locations:
-#  "/somewhere":
-#    - return;
-#  "/yay":
-#    - # directive 1 would go here;
-#    - # directive 2 would go here;
-#    - # ... add as many directives as you want;
+nginx_extra_locations: |
+#  location / {
+#    return;
+#  }
+#
+#  location ~ ^/(images|javascript|js|css|flash|media|static)/ {
+#    # directive 1 would go here;
+#    # directive 2 would go here;
+#    # ... add as many directives as you want;
+#  }
 
 # If this is false then your ssl cert/key is not transferred and none of the
 # ssl values are output to your nginx config.

@@ -58,17 +58,7 @@ server {
     try_files $uri @{{ nginx_backend_name }};
   }
 
-{% if nginx_extra_locations is iterable %}
-{% for key, value in nginx_extra_locations.items() %}
-  location {{ key }} {
-{% if value is iterable %}
-{% for k in value %}
-    {{ k }}
-{% endfor %}
-{% endif %}
-  }
-{% endfor %}
-{% endif %}
+  {{ nginx_extra_locations|indent(2) }}
 
 {% if nginx_assets_enabled %}
   location {{ nginx_assets_regex }} {
