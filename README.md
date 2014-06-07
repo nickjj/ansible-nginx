@@ -112,7 +112,7 @@ nginx_ssl_session_cache: shared:SSL:10m
 nginx_ssl_session_timeout: 10m
 
 # What local path contains your cert and key?
-nginx_ssl_local_path: ~/dev/secrets/
+nginx_ssl_local_path: /home/you/dev/secrets
 
 # What are the file names for both your cert and key?
 nginx_ssl_cert_name: sslcert.crt
