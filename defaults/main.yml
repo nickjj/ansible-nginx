@@ -41,7 +41,7 @@ nginx_ssl_strict_transport_header_age: 15768000
 nginx_ssl_session_cache: shared:SSL:10m
 nginx_ssl_session_timeout: 10m
 
-nginx_ssl_local_path: ~/dev/testproject/secrets/
+nginx_ssl_local_path: /home/you/dev/testproject/secrets/
 nginx_ssl_cert_name: sslcert.crt
 nginx_ssl_key_name: sslkey.key
 
