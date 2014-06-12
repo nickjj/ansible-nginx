@@ -8,7 +8,7 @@
 - name: ensure nginx latest stable is installed
   apt: pkg=nginx state=latest update_cache=true cache_valid_time={{ apt_cache_valid_time }}
   notify:
-  - restart nginx
+    - restart nginx
 
 - name: ensure the default site is removed
   file: path=/etc/nginx/sites-{{ item }}/default state=absent
@@ -16,7 +16,7 @@
     - enabled
     - available
   notify:
-  - restart nginx
+    - restart nginx
 
 - name: ensure nginx ssl directory is created
   file: path=/etc/nginx/ssl state=directory
@@ -29,22 +29,22 @@
     - "{{ nginx_ssl_key_name }}"
   when: nginx_ssl
   notify:
-  - reload nginx
+    - reload nginx
 
 - name: ensure nginx is configured
   template: src=nginx_conf.j2 dest=/etc/nginx/nginx.conf group=root owner=root
   notify:
-  - reload nginx
+    - reload nginx
 
 - name: ensure sites-available is configured
   template: src=nginx_sites-available.conf.j2 dest=/etc/nginx/sites-available/{{ nginx_upstream_name }} group=root owner=root
   notify:
-  - reload nginx
+    - reload nginx
 
 - name: ensure sites-available is symlinked to sites-enabled
   file: src=/etc/nginx/sites-available/{{ nginx_upstream_name }} dest=/etc/nginx/sites-enabled/{{ nginx_upstream_name }} state=link
   notify:
-  - restart nginx
+    - restart nginx
 
 - name: ensure nginx starts on a fresh reboot
   service: name=nginx state=started enabled=yes
