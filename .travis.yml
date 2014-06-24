@@ -24,6 +24,7 @@ script:
   - "cd tests && node server &"
   - "sleep 3"
   - "chmod 777 /tmp/testproject.sock"
+  - "sudo service nginx restart"
   - >
     curl -s -o /dev/null -w "%{http_code}" http://localhost
     | grep -q '200'
