@@ -21,7 +21,9 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
   - >
-    cd tests && node server & && chmod 777 /tmp/testproject.sock && curl -s -o /dev/null -w "%{http_code}" http://localhost
+    cd tests && node server &
+    sleep 3
+    chmod 777 /tmp/testproject.sock && curl -s -o /dev/null -w "%{http_code}" http://localhost
     | grep -q '200'
     && (echo 'Status code test: pass' && exit 0)
     || (echo 'Status code test: fail' && exit 1)
