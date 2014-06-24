@@ -15,13 +15,8 @@ install:
 script:
   - "ansible-playbook $SITE_AND_INVENTORY --syntax-check"
   - "ansible-playbook $SITE_AND_INVENTORY --connection=local -vvvv"
-  - >
-    ansible-playbook $SITE_AND_INVENTORY --connection=local
-    | grep -q 'changed=0.*failed=0'
-    && (echo 'Idempotence test: pass' && exit 0)
-    || (echo 'Idempotence test: fail' && exit 1)
-  - "cd tests"
-  - "nohup node server &"
+  - "ansible-playbook $SITE_AND_INVENTORY --connection=local -vvvv"
+  - "cd tests && node server &"
   - "sleep 3"
   - "chmod 777 /tmp/testproject.sock"
   - >
