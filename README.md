@@ -1,4 +1,4 @@
-## What is ansible-nginx?
+## What is ansible-nginx? [![Build Status](https://secure.travis-ci.org/nickjj/ansible-nginx.png)](http://travis-ci.org/nickjj/ansible-nginx)
 
 It is an [ansible](http://www.ansible.com/home) role to install the latest version of nginx stable, configure a backend (upstream) and optionally configure ssl.
 
