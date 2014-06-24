@@ -12,9 +12,6 @@ install:
   - "pip install ansible==1.6.2"
   - "printf '[defaults]\nroles_path = ../' > ansible.cfg"
 
-before_script:
-  - echo "var http = require('http'); http.createServer(function (req, res) { res.writeHead(200, {'Content-Type': 'text/plain'}); res.end('Hello World\n');}).listen('/tmp/testproject.sock');" > server.js
-
 script:
   - "ansible-playbook $SITE_AND_INVENTORY --syntax-check"
   - "ansible-playbook $SITE_AND_INVENTORY --connection=local -vvvv"
@@ -23,7 +20,7 @@ script:
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
-  - "node server &"
+  - "cd tests && node server &"
   - >
     curl -s -o /dev/null -w "%{http_code}" http://localhost
     | grep -q '200'
