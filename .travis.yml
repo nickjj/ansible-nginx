@@ -22,6 +22,7 @@ script:
     || (echo 'Idempotence test: fail' && exit 1)
   - "cd tests"
   - "node server &"
+  - "sleep 3"
   - "chmod 777 /tmp/testproject.sock"
   - >
     curl -s -o /dev/null -w "%{http_code}" http://localhost
