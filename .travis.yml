@@ -7,6 +7,7 @@ env:
 
 before_install:
   - "sudo apt-get update -qq"
+  - "sudo apt-get install -y curl"
 
 install:
   - "pip install ansible==1.6.2"
@@ -22,8 +23,9 @@ script:
     || (echo 'Idempotence test: fail' && exit 1)
   - "cd tests && node server &"
   - "sleep 3"
+  - "chmod 777 /tmp/testproject.sock"
   - >
-    chmod 777 /tmp/testproject.sock && curl -s -o /dev/null -w "%{http_code}" http://localhost
+    curl -s -o /dev/null -w "%{http_code}" http://localhost
     | grep -q '200'
     && (echo 'Status code test: pass' && exit 0)
     || (echo 'Status code test: fail' && exit 1)
