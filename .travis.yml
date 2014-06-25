@@ -27,6 +27,3 @@ script:
   - "sudo service nginx restart"
   - >
     curl -s -o /dev/null -w "%{http_code}" http://localhost:8080
-    | grep -q '200'
-    && (echo 'Status code test: pass' && exit 0)
-    || (echo 'Status code test: fail' && exit 1)
