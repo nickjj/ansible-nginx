@@ -22,7 +22,7 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
   - "cd tests && node server &"
-  - "sleep 3"
+  - "sudo cat /etc/nginx/sites-available/testproject"
   - "chmod 777 /tmp/testproject.sock"
   - "sudo service nginx restart"
   - >

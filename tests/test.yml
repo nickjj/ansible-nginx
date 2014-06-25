@@ -6,6 +6,7 @@
     nginx_listen: 8080
     nginx_base_domain: localhost
     nginx_upstream_server: /tmp/testproject.sock
+    nginx_backend_name: testproject
     nginx_root_path: /tmp
     nginx_error_pages:
 
