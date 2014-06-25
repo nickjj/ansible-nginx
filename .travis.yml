@@ -26,6 +26,6 @@ script:
     | grep -q 'changed=1.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
-  - > sudo cat /var/log/nginx/error.log
+  - "sudo cat /var/log/nginx/error.log"
   - >
     curl http://localhost:8080
