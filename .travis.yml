@@ -13,6 +13,11 @@ install:
   - "pip install ansible==1.6.2"
   - "printf '[defaults]\nroles_path = ../' > ansible.cfg"
 
+before_script:
+  - "cd tests && node server &"
+  - "sleep 3"
+  - "chmod 777 /tmp/testproject.sock"
+
 script:
   - "ansible-playbook $SITE_AND_INVENTORY --syntax-check"
   - "ansible-playbook $SITE_AND_INVENTORY --connection=local -vvvv"
@@ -21,10 +26,5 @@ script:
     | grep -q 'changed=1.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
-  - "cd tests && node server &"
-  - "sleep 3"
-  - "sudo cat /etc/nginx/sites-available/testproject"
-  - "chmod 777 /tmp/testproject.sock"
-  - "sudo service nginx restart"
   - >
-    curl -s -o /dev/null -w "%{http_code}" http://localhost:8080
+    curl http://localhost:8080
