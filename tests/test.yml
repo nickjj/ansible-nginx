@@ -3,10 +3,11 @@
   remote_user: travis
   sudo: true
   vars:
+    nginx_listen: 8080
     nginx_base_domain: localhost
     nginx_upstream_server: unix:///tmp/testproject.sock
     nginx_root_path: /tmp
-    nginx_error_pages:
+    nginx_listen_ssl: 8081
     nginx_ssl: true
     nginx_ssl_local_path: /tmp
 

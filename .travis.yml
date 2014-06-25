@@ -28,13 +28,12 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
   - >
-    curl -s -o /dev/null -w "%{http_code}" http://localhost
+    curl -s -o /dev/null -w "%{http_code}" http://localhost:8080
     | grep -q '200'
     && (echo 'HTTP test: pass' && exit 0)
     || (echo 'HTTP test: fail' && exit 1)
   - >
-    curl -k -s -o /dev/null -w "%{http_code}" https://localhost
+    curl -k -s -o /dev/null -w "%{http_code}" https://localhost:8081
     | grep -q '200'
     && (echo 'HTTPs test: pass' && exit 0)
     || (echo 'HTTPs test: fail' && exit 1)
-  - "sudo cat /var/log/nginx/error.log"
