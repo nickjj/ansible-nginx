@@ -2,7 +2,7 @@
 # Manual customization of this file is not recommended.
 user www-data;
 worker_processes {{ ansible_processor_cores }};
-pid /run/nginx.pid;
+pid /var/nginx.pid;
 
 events {
   worker_connections 1024;
