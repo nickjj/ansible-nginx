@@ -37,3 +37,4 @@ script:
     | grep -q '200'
     && (echo 'HTTPs test: pass' && exit 0)
     || (echo 'HTTPs test: fail' && exit 1)
+  - "sudo cat /var/log/nginx/error.log"

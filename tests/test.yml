@@ -6,6 +6,7 @@
     nginx_base_domain: localhost
     nginx_upstream_server: unix:///tmp/testproject.sock
     nginx_root_path: /tmp
+    nginx_error_pages:
     nginx_ssl: true
     nginx_ssl_local_path: /tmp
 
