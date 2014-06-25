@@ -7,6 +7,7 @@
     nginx_base_domain: localhost
     nginx_upstream_server: /tmp/testproject.sock
     nginx_root_path: /tmp
+    nginx_error_pages:
 
   roles:
     - ansible-nginx
