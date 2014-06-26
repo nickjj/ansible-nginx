@@ -7,7 +7,6 @@ env:
 
 before_install:
   - "sudo apt-get update -qq"
-  - "sudo apt-get install -y curl"
 
 install:
   - "pip install ansible==1.6.2"
