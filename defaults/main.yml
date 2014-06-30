@@ -6,10 +6,10 @@ nginx_server_name: "{{ nginx_base_domain }}"
 nginx_base_redirect_to_www: false
 
 nginx_upstream_name: testproject
-nginx_upstream_server: unix:///srv/testproject/tmp/puma.sock
+nginx_upstream_server: unix:///srv/{{ nginx_upstream_name }}/tmp/puma.sock
 nginx_backend_name: puma
 
-nginx_root_path: /srv/testproject/public
+nginx_root_path: /srv/{{ nginx_upstream_name }}/public
 nginx_assets_enabled: true
 nginx_assets_regex: ~ ^/(system|assets)/
 

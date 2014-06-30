@@ -45,11 +45,11 @@ nginx_base_redirect_to_www: false
 
 # What type of backend are you using and what is its location?
 nginx_upstream_name: testproject
-nginx_upstream_server: unix:///srv/testproject/tmp/puma.sock
+nginx_upstream_server: unix:///srv/{{ nginx_upstream_name }}/tmp/puma.sock
 nginx_backend_name: puma
 
 # Where are your public files stored?
-nginx_root_path: /srv/testproject/public
+nginx_root_path: /srv/{{ nginx_upstream_name }}/public
 
 # Should nginx serve static assets?
 nginx_assets_enabled: true
@@ -141,7 +141,7 @@ Let's say you want to edit a few defaults, you can do this by opening or creatin
 
 ```
 ---
-nginx_root_path: /srv/awesomeapp/public
+nginx_upstream_name: awesomeapp
 nginx_base_redirect_to_www: true
 ```
 
