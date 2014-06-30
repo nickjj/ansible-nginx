@@ -45,11 +45,11 @@ nginx_base_redirect_to_www: false
 
 # What type of backend are you using and what is its location?
 nginx_upstream_name: testproject
-nginx_upstream_server: unix:///var/run/puma.sock
+nginx_upstream_server: unix:///srv/testproject/tmp/puma.sock
 nginx_backend_name: puma
 
 # Where are your public files stored?
-nginx_root_path: /home/deploy/testproject.git/public
+nginx_root_path: /srv/testproject/public
 
 # Should nginx serve static assets?
 nginx_assets_enabled: true
@@ -112,7 +112,7 @@ nginx_ssl_session_cache: shared:SSL:10m
 nginx_ssl_session_timeout: 10m
 
 # What local path contains your cert and key?
-nginx_ssl_local_path: /home/you/dev/secrets
+nginx_ssl_local_path: /home/yourname/dev/testproject/secrets
 
 # What are the file names for both your cert and key?
 nginx_ssl_cert_name: sslcert.crt
@@ -141,7 +141,7 @@ Let's say you want to edit a few defaults, you can do this by opening or creatin
 
 ```
 ---
-nginx_root_path: /home/myusername/awesomeapp.git/public
+nginx_root_path: /srv/awesomeapp/public
 nginx_base_redirect_to_www: true
 ```
 
