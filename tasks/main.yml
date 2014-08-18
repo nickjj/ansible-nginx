@@ -27,7 +27,7 @@
   with_items:
     - "{{ nginx_ssl_cert_name }}"
     - "{{ nginx_ssl_key_name }}"
-  when: nginx_ssl
+  when: nginx_ssl and nginx_ssl_manage_certs
   notify:
     - reload nginx
 

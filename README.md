@@ -78,9 +78,13 @@ nginx_extra_locations: |
 #    # ... add as many directives as you want;
 #  }
 
-# If this is false then your ssl cert/key is not transferred and none of the
-# ssl values are output to your nginx config.
+# If this is false then none of the ssl values are output to your nginx config.
 nginx_ssl: false
+
+# Set this to false if you have a separate role that manages copying
+# SSL certificates/keys to the server, and don't want this role
+# to attempt copying your SSL keys over
+nginx_ssl_manage_certs: true
 
 # What port should nginx listen on for https requests?
 nginx_listen_ssl: 443
