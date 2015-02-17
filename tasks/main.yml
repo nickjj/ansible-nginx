@@ -1,9 +1,11 @@
 ---
 - name: ensure ansible's apt_repository dependency is installed
   apt: pkg=python-apt state=latest update_cache=true cache_valid_time={{ apt_cache_valid_time }}
+  when: nginx_configure_ppa
 
 - name: ensure nginx apt repository is up to date
   apt_repository: repo='ppa:nginx/stable'
+  when: nginx_configure_ppa
 
 - name: ensure nginx latest stable is installed
   apt: pkg=nginx state=latest update_cache=true cache_valid_time={{ apt_cache_valid_time }}

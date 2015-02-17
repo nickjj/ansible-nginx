@@ -133,6 +133,19 @@ nginx_ssl_key_name: sslkey.key
 
 # The amount in seconds to cache apt-update.
 apt_cache_valid_time: 86400
+
+# Should we install the Custom PPA for nginx?
+# Disable this if you are not using Ubuntu. If you set nginx_configure_ppa to false,
+# you will probably need to set 'nginx_spdy_enabled: false' too, since only the PPA version
+# includes spdy. nginx_names_hash_bucket_size will also need to be set to 64 in most cases
+nginx_configure_ppa: true
+
+# Should the SPDY extension be enabled?
+nginx_spdy_enabled: true
+
+# Configure server_names_hash_bucket_size
+nginx_names_hash_bucket_size: 32
+
 ```
 
 ## Example playbook without ssl

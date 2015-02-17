@@ -10,7 +10,8 @@ before_install:
 
 install:
   - "pip install ansible==1.8.3"
-  - "printf '[defaults]\nroles_path = ../' > ansible.cfg"
+  - "echo '[defaults]' > ansible.cfg"
+  - "echo 'roles_path = ../' >> ansible.cfg"
 
 before_script:
   - "cd tests && node server &"

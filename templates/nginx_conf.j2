@@ -15,6 +15,8 @@ http {
   # Basic Settings
   ##
 
+  server_names_hash_bucket_size {{ nginx_names_hash_bucket_size }};
+
   sendfile on;
   tcp_nopush on;
   tcp_nodelay on;

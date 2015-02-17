@@ -1,6 +1,10 @@
 ---
 nginx_listen: 80
 
+nginx_configure_ppa: true
+nginx_spdy_enabled: true
+nginx_names_hash_bucket_size: 32
+
 nginx_base_domain: "{{ ansible_fqdn }}"
 nginx_server_name: "{{ nginx_base_domain }}"
 nginx_base_redirect_to_www: false
