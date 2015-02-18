@@ -31,7 +31,7 @@ server {
 server {
   listen {{ nginx_listen }};
 {% if nginx_ssl %}
-  listen {{ nginx_listen_ssl }} ssl spdy;
+  listen {{ nginx_listen_ssl }} ssl{{ ' spdy' if nginx_spdy_enabled else ''}};
 {% endif %}
   server_name {{ nginx_server_name }};
   root {{ nginx_root_path }};
@@ -63,7 +63,7 @@ server {
 {% if nginx_assets_enabled %}
   location {{ nginx_assets_regex }} {
     gzip_static on;
-    
+
     expires 1y;
     add_header Cache-Control public;
     add_header Last-Modified "";
