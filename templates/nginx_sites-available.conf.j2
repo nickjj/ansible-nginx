@@ -42,7 +42,7 @@ server {
   ssl_session_cache {{ nginx_ssl_session_cache }};
   ssl_session_timeout {{ nginx_ssl_session_timeout }};
   ssl_prefer_server_ciphers on;
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_protocols {{ nginx_ssl_protocols }};
   ssl_ciphers {{ nginx_ssl_ciphers }};
   ssl_ecdh_curve {{ nginx_ssl_ecdh_curve }};
   add_header Strict-Transport-Security $sts;

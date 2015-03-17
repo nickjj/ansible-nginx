@@ -49,5 +49,6 @@ nginx_ssl_manage_certs: true
 nginx_ssl_local_path: /home/yourname/dev/testproject/secrets
 nginx_ssl_cert_name: sslcert.crt
 nginx_ssl_key_name: sslkey.key
+nginx_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
 
 apt_cache_valid_time: 86400
