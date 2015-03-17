@@ -131,6 +131,9 @@ nginx_ssl_local_path: /home/yourname/dev/testproject/secrets
 nginx_ssl_cert_name: sslcert.crt
 nginx_ssl_key_name: sslkey.key
 
+# Whicb SSL protocols should we support?
+nginx_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
+
 # The amount in seconds to cache apt-update.
 apt_cache_valid_time: 86400
 
