@@ -14,7 +14,7 @@ map $scheme $sts {
 server {
   listen {{ nginx_listen }};
   server_name {{ nginx_base_domain }};
-  return 301 $scheme://www.{{ nginx_server_name }}$request_uri;
+  return 301 $scheme://www.{{ nginx_base_domain }}$request_uri;
 }
 {% endif %}
 
