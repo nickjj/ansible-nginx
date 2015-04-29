@@ -101,6 +101,15 @@ nginx_listen_ssl: 443
 # Should all requests be redirected to https?
 nginx_server_redirect_to_ssl: false
 
+# Should X-Forwarded-Proto headers set to http redirect to ssl?
+# Set to true if you are running in front of an Elastic Load Balancer
+nginx_server_x_forwarded_for_http_redirect_to_ssl: false
+
+# Do we have a non-ssl healthcheck path that should not be redirected,
+# even if nginx_server_x_forwarded_for_http_redirect_to_ssl is true?
+# Set this to the pathname - like /ping
+nginx_healthcheck_path: false
+
 # Legal values are: selfsigned, signed or wildcard
 nginx_ssl_type: selfsigned
 
