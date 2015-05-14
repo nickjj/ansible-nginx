@@ -55,8 +55,21 @@ server {
 {% endif %}
 
   location / {
+    {% if (nginx_server_x_forwarded_for_http_redirect_to_ssl) %}
+    # When Load-balanced, forward non-ssl traffic to SSL
+    if ($http_x_forwarded_proto != 'https') {
+      rewrite ^ https://$host$request_uri? permanent;
+    }
+    {% endif %}
+
     try_files $uri @{{ nginx_backend_name }};
   }
+
+  {% if (nginx_healthcheck_path) %}
+  location {{ nginx_healthcheck_path }} {
+      try_files $uri @{{ nginx_backend_name }};
+  }
+  {% endif %}
 
   {{ nginx_extra_locations|indent(2) }}
 
@@ -73,7 +86,11 @@ server {
 
   location @{{ nginx_backend_name }} {
     proxy_set_header X-Real-IP $remote_addr;
+    {% if (nginx_server_x_forwarded_for_http_redirect_to_ssl) %}
+    proxy_set_header X-Forwarded-Proto 'https';
+    {% else %}
     proxy_set_header X-Forwarded-Proto $scheme;
+    {% endif %}
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_redirect off;
