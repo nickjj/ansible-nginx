@@ -15,4 +15,4 @@
         update_cache: True
 
   roles:
-    - this_role
+    - ansible-nginx
