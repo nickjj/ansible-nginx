@@ -4,6 +4,7 @@
   become: True
 
   vars:
+    nginx_worker_processes: 1
     nginx_sites:
       default:
         domains: ['localhost']
