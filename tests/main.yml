@@ -2,9 +2,10 @@
 
 - hosts: all
   vars:
-    nginx_ssl_dhparam_bits: 2048
     nginx_sites:
       default:
+        listen_http: 8080
+        listen_https: 8081
         domains: ['localhost']
 
   pre_tasks:
