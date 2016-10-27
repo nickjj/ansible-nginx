@@ -44,7 +44,7 @@ script:
     || (echo 'Idempotence test: fail' && exit 1)
 
   - >
-    curl -k -s -o /dev/null -w "%{http_code}" https://localhost
+    curl -k -s -o /dev/null -w "%{http_code}" https://localhost:8081
     | grep -q '200'
     && (echo 'HTTPS test: pass' && exit 0)
     || (echo 'HTTPS test: fail' && exit 1)
