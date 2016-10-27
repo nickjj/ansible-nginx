@@ -4,9 +4,10 @@
   vars:
     nginx_sites:
       default:
+        domains: ['localhost']
+        default_server: True
         listen_http: 8080
         listen_https: 8081
-        domains: ['localhost']
 
   pre_tasks:
     - name: Update APT cache
