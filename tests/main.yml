@@ -1,16 +1,17 @@
 ---
 
 - hosts: all
-  become: True
-
   vars:
-    nginx_worker_processes: 1
     nginx_sites:
       default:
         domains: ['localhost']
-        default_server: True
         listen_http: 8080
         listen_https: 8081
 
+  pre_tasks:
+    - name: Update APT cache
+      apt:
+        update_cache: True
+
   roles:
-    - ansible-nginx
+    - this_role
