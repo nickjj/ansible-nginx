@@ -1,0 +1,16 @@
+---
+
+- hosts: all
+  vars:
+    nginx_ssl_dhparam_bits: 2048
+    nginx_sites:
+      default:
+        domains: ['localhost']
+
+  pre_tasks:
+    - name: Update APT cache
+      apt:
+        update_cache: True
+
+  roles:
+    - this_role

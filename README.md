@@ -1,249 +1,247 @@
-## WARNING: This role will be deprecated very soon
-
-All of the functionality provided by this role and more is available in the [DebOps project](http://debops.org). If you are using some of my roles in conjunction with each other, you will find the move to DebOps most pleasurable.
-
-This role will be **removed** from the **galaxy** and from **github** anywhere from 42 microseconds to 2-3 weeks after you read this message.
-
----
-
-
 ## What is ansible-nginx? [![Build Status](https://secure.travis-ci.org/nickjj/ansible-nginx.png)](http://travis-ci.org/nickjj/ansible-nginx)
 
-It is an [ansible](http://www.ansible.com/home) role to install the latest version of nginx stable, configure a backend (upstream) and optionally configure ssl.
+It is an [Ansible](http://www.ansible.com/home) role to install and configure
+nginx. It has first class support for Let's Encrypt but works out of the box
+with self signed SSL certificates for non-production environments.
+
+##### Supported platforms:
+
+- Ubuntu 16.04 LTS (Xenial)
+- Debian 8 (Jessie)
 
 ### What problem does it solve and why is it useful?
 
-I wasn't happy with any of the nginx roles that I came across. They were either overly complex, tried to be too modular by allowing you to define an entire backend using yaml syntax or were missing features that I really wanted.
+I wasn't happy with any of the nginx roles that I came across. They were either
+overly complex or were missing features that I really wanted.
 
-Here is a feature list of this role:
+Here's what you get with this role:
 
-- Configure an nginx server with sane defaults in less than 5 lines of yaml settings
-- Change the listen ports for both http and https
-- Toggle the ability to serve static assets and supply your own asset matching regex
-- Toggle the ability to redirect a server to the www variant
-- Add as many location blocks as you want with the least amount of pain
-- Setup any number of error pages using the most simple syntax possible
-  - This is useful if you want custom 404, 500 or maintenance pages
-- Define a root path and upsteam name/server location
-- Optionally support ssl
-  - Toggle a single variable to turn ssl on or off
-  - Toggle whether or not http requests should redirect to https
-  - Transfer your cert/key to the server
-  - Choose the ssl type
-  - Pick the cipher and curve
-  - Support and set the strict transport header with tweakable values
-  - Support session caching and timeout with tweakable values
+- Configure 1 or more sites-enabled (virtual hosts)
+- Configure 0 or more upstreams per virtual host
+- Configure a working site in as little as 3 lines of YAML
+- Forced HTTPS with A+ certificate ratings (bearing your certificate authority)
+- Self signed certs are generated to work out of the box for non-production environments
+- First class support for Let's Encrypt SSL certificates for production environments
+- Tune a bunch of `nginx.conf` settings for performance
+- Allow you to optionally declare custom nginx and vhost directives easily
+- Allow you to easily customize your upstream's proxy settings
 
 ## Role variables
 
 Below is a list of default values along with a description of what they do.
 
 ```
-# What port should nginx listen on for http requests?
-nginx_listen: 80
+---
 
-# Your domain name.
-nginx_base_domain: "{{ ansible_fqdn }}"
+# Should nginx itself be installed? You may want to set this to False in
+# situations where you use Ansible to provision a server but run everything
+# inside of Docker containers. You could use this role to manage your configs
+# but not run nginx by setting this to False.
+nginx_install_service: True
 
-# The server name. This could be the base domain or perhaps
-# foo.{{ nginx_base_domain }} or www.{{ nginx_base_domain }}
-nginx_server_name: "{{ nginx_base_domain }}"
+# Which user/group should nginx belong to?
+nginx_user: 'www-data'
 
-# Should it automatically redirect the base domain to the www version?
-nginx_base_redirect_to_www: false
+# Various nginx config values set up to be efficient and secure, feel free to
+# Google each one as needed for details.
+nginx_worker_processes: 'auto'
+nginx_worker_rlimit_nofile: 4096
+nginx_events_worker_connections: 1024
+nginx_http_server_tokens: 'off'
+nginx_http_add_headers:
+  - 'X-Frame-Options SAMEORIGIN'
+  - 'X-Content-Type-Options nosniff'
+  - 'X-XSS-Protection "1; mode=block"'
+nginx_http_server_names_hash_bucket_size: 64
+nginx_http_server_names_hash_max_size: 512
+nginx_http_sendfile: 'on'
+nginx_http_tcp_nopush: 'on'
+nginx_http_keepalive_timeout: 60
+nginx_http_client_max_body_size: '1m'
+nginx_http_types_hash_max_size: 2048
+nginx_http_gzip: 'on'
+nginx_http_gzip_disable: 'msie6'
 
-# What type of backend are you using and what is its location?
-nginx_upstream_name: testproject
-nginx_upstream_server: unix:///srv/{{ nginx_upstream_name }}/tmp/puma.sock
-nginx_backend_name: puma
+# Add your own custom nginx.conf directives in a list.
+# Example:
+#   nginx_http_directives:
+#     - 'auth_http_header X-Auth-Key "secret_string"'
+nginx_http_directives: []
 
-# Where are your public files stored?
-nginx_root_path: /srv/{{ nginx_upstream_name }}/public
-
-# Should nginx serve static assets?
-nginx_assets_enabled: true
-
-# The regex to match for serving static assets.
-nginx_assets_regex: "~ ^/(system|assets)/"
-
-# A dict containing an array of error pages.
-# If you have none then set the nginx_error_pages to be an empty string.
-nginx_error_pages:
-  - { error_code: 404, error_page: 404.html }
-  - { error_code: 500, error_page: 500.html }
-  - { error_code: 502 503 504, error_page: 502.html }
-
-# By default there are no extra locations but you can add as many as you want.
-# Don't forget the | to enable text blocks, feel free to use template tags too.
-# The values must be valid nginx syntax, don't forget the semi-colons!
-nginx_extra_locations: |
-#  location / {
-#    return;
-#  }
+# How many bits should we use to generate a dhparam?
+# Technically 2048 is 'good enough' but 4096 combined with a few other
+# things will get you to a perfect 100 A+ SSL rating, do not go below 2048.
 #
-#  location ~ ^/(images|javascript|js|css|flash|media|static)/ {
-#    # directive 1 would go here;
-#    # directive 2 would go here;
-#    # ... add as many directives as you want;
-#  }
+# Time to generate on a 512MB DO droplet: 2048 = 40 seconds, 4096 = 40 minutes.
+nginx_ssl_dhparam_bits: 2048
 
-# If this is false then none of the ssl values are output to your nginx config.
-nginx_ssl: false
+# Default values for your virtual hosts and upstreams.
+nginx_default_sites:
+  # Name of the virtual host and file name of the config, example: default.conf.
+  default:
+    # 1 or more domains to be set for server_name. If you wish to support both
+    # www and no www then supply them like so: domains: ['foo.com', 'www.foo.com'].
+    # In the above case, www.foo.com will redirect to foo.com.
+    # If you want www in your URL then swap the order in the domains list.
+    domains: []
+    # Will this virtual host be the default server? You should set this to
+    # True so that if someone accesses your server's IP address directly, it
+    # will automatically redirect to this vhost.
+    default_server: False
+    # Listen ports for both HTTP and HTTPS.
+    listen_http: 80
+    listen_https: 443
+    # Where are your public files located?
+    # If you're using an upstream, this will likely need to change to your web
+    # framework's public path, such as: /path/to/myapp/public.
+    root: '/usr/share/nginx/html'
+    # Do you have any custom directives for this vhost?
+    # Example:
+    #   nginx_directives:
+    #     - 'access_log logs/access.log combined'
+    directives: []
+    ssl:
+      # Default SSL settings that get you an A+ rating as long as you chain your
+      # certificate with an intermediate certificate.
+      protocols: 'TLSv1 TLSv1.1 TLSv1.2'
+      ciphers: 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4'
+      prefer_server_ciphers: 'on'
+      session_cache: 'shared:SSL:50m'
+      session_timeout: '5m'
+      ssl_stapling: 'on'
+      ssl_stapling_verify: 'on'
+      resolver: '8.8.8.8'
+      resolver_timeout: '5s'
+      # You may want to consider adding ;preload once you're 100% confident
+      # that your server is working over HTTPS and you won't use HTTP for 2 years.
+      # See: https://www.owasp.org/index.php/HTTP_Strict_Transport_Security_Cheat_Sheet
+      sts_header: 'Strict-Transport-Security "max-age=63072000; includeSubdomains;"'
+    cache_all_locations:
+      # Shall we cache all requests for a bit of time? If so, how long?
+      enabled: True
+      duration: '30s'
+    error_pages:
+      # You will need to supply your own 404.html and 500.html files if you enable
+      # this. It's enabled by default because 99.9% of the time you do want these.
+      # You can disable this by setting, error_pages: [].
+      - { code: 404, page: '404.html' }
+      - { code: 500, page: '500.html' }
+    serve_assets:
+      # Let's serve assets through nginx, adjust the pattern depending on what web
+      # framework you use. Caching is set to maximum time because most frameworks
+      # have a way for you to md5 tag assets to cache bust them in one way or another.
+      # If your framework does not have that capability, disable the cache setting,
+      # or set it to a lower amount of your choosing.
+      enabled: True
+      pattern: ' ~ ^/assets/'
+      expires: 'max'
+    # Perhaps you'd like to include your own location blocks, no problem. Just add
+    # in your location block(s) as you would inside of an nginx config. Example:
+    #   custom_locations: |
+    #     location ~ / {
+    #       return;
+    #     }
+    custom_locations: ''
+    disallow_hidden_files:
+      # Block all hidden files and directories, disable at your own risk.
+      enabled: True
+    # Configure 0 or more upstreams in a list, the first item in the list will
+    # be the default try_files fall-back endpoint, for example:
+    #   upstreams:
+          - name: 'myapp'
+            servers: ['localhost:3000']
+          - name: 'websocketapp'
+            servers: ['localhost:3001']
+            add_proxy_settings:
+              - 'proxy_http_version 1.1'
+              - 'proxy_set_header Upgrade $http_upgrade'
+    # The template that generates this config expects you to define at least
+    # the name and servers. It will blow up if you don't.
+    upstreams: []
 
-# Set this to false if you have a separate role that manages copying
-# SSL certificates/keys to the server, and don't want this role
-# to attempt copying your SSL keys over
-nginx_ssl_manage_certs: true
+# Customize the upstream's proxy settings if you want, these are the defaults
+# and they will be pre-pended to your list of optional upstream proxy settings.
+nginx_default_upstream_proxy_settings:
+  - 'proxy_set_header X-Real-IP $remote_addr'
+  - 'proxy_set_header X-Forwarded-Proto $scheme'
+  - 'proxy_set_header Host $http_host'
+  - 'proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for'
+  - 'proxy_redirect off'
 
-# What port should nginx listen on for https requests?
-nginx_listen_ssl: 443
+# If you're using Let's Encrypt, you can configure nginx to accept challenges to
+# validate your domain(s). An HTTP based challenge is already set up for you.
+#
+# If you're using this role along with my LE role you don't need to touch this.
+#
+# That role can be found here: https://github.com/nickjj/ansible-letsencrypt
+nginx_letsencrypt_root: '/usr/share/nginx/challenges'
 
-# Should all requests be redirected to https?
-nginx_server_redirect_to_ssl: false
-
-# Legal values are: selfsigned, signed or wildcard
-nginx_ssl_type: selfsigned
-
-# Perfect forward secrecy cipher.
-nginx_ssl_ciphers: "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4"
-
-# Best practice according to https://bettercrypto.org/.
-nginx_ssl_ecdh_curve: secp384r1
-
-# If you are using a wildcard certificate then which domain will be used?
-nginx_ssl_wildcard_domain: "{{ ansible_domain }}"
-
-# http://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
-nginx_ssl_strict_transport_header_age: 15768000
-
-# Non-default values to increase performance, the nginx default is:
-# nginx_ssl_session_cache: none
-nginx_ssl_session_cache: shared:SSL:10m
-
-# Non-default values to increase performance, the nginx default is:
-# nginx_ssl_session_timeout: 5m
-nginx_ssl_session_timeout: 10m
-
-# What local path contains your cert and key?
-nginx_ssl_local_path: /home/yourname/dev/testproject/secrets
-
-# What are the file names for both your cert and key?
-nginx_ssl_cert_name: sslcert.crt
-nginx_ssl_key_name: sslkey.key
-
-# Whicb SSL protocols should we support?
-nginx_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
-
-# The amount in seconds to cache apt-update.
-apt_cache_valid_time: 86400
-
-# Should we install the Custom PPA for nginx?
-# Disable this if you are not using Ubuntu. If you set nginx_configure_ppa to false,
-# you will probably need to set 'nginx_spdy_enabled: false' too, since only the PPA version
-# includes spdy. nginx_names_hash_bucket_size will also need to be set to 64 in most cases
-nginx_configure_ppa: true
-
-# Should the SPDY extension be enabled?
-nginx_spdy_enabled: true
-
-# Configure server_names_hash_bucket_size
-nginx_names_hash_bucket_size: 32
-
+# This is the value you'll set in your inventory to override any of the defaults
+# from nginx_default_sites. A complete example is shown later on in this README.
+nginx_sites: {}
 ```
 
-## Example playbook without ssl
+## Example playbook
 
-For the sake of this example let's assume you have a group called **app** and you have a typical `site.yml` file.
+For the sake of this example let's assume you have a group called **app** and
+you have a typical `site.yml` file.
 
 To use this role edit your `site.yml` file to look something like this:
 
 ```
 ---
-- name: ensure app servers are configured
-- hosts: app
+
+- name: Configure app server(s)
+  hosts: app
+  become: True
 
   roles:
     - { role: nickjj.nginx, tags: nginx }
 ```
 
-Let's say you want to edit a few defaults, you can do this by opening or creating `group_vars/app.yml` which is located relative to your `inventory` directory and then making it look something like this:
+Let's say you want to accomplish the following goals:
+
+- Set up your main site to work on non-www and www
+- Have all www requests get redirected to non-www
+- Set up the main host as the default server
+- Set up an upstream to serve a back-end using your web framework of choice
+- Load balance between 2 upstream servers
+- Configure a blog sub-domain with assets being served by a CDN
+
+Start by opening or creating `group_vars/app.yml` which is located relative
+to your `inventory` directory and then making it look like this:
 
 ```
 ---
-nginx_upstream_name: awesomeapp
-nginx_base_redirect_to_www: true
-```
 
-## Example playbook with ssl
-
-First things first, make sure you read the section above because setting up the ssl version of this role is the same as the non-ssl version except it requires a few more defaults to be changed.
-
-#### Do you need an ssl certificate and key?
-
-If you just want to mess around and ensure your server responds correctly to https requests then you can use self signed keys. The downside to using self signed keys is that users of your site will see a giant warning saying your domain cannot be trusted because the keys are not verified.
-
-This is fine for testing because you can just click the proceed button and your site will work as planned.
-
-To generate your own self signed keys, open a terminal and goto some directory, let's say `~/tmp`. Within this directory enter the following command:
-
-`$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout sslkey.key -out sslcert.crt`
-
-That will generate both a certificate and key using 2048 bit encryption. Keep note of the path of where you created these files.
-
-#### Do you have a signed ssl certificate and key from a trusted source?
-
-Excellent, put them somewhere and keep note of their file names.
-
-#### You are ready to change a few defaults
-
-Overwrite at least the following default value(s) in `group_vars/all.yml`:
-
-```
-nginx_ssl: true
-
-nginx_ssl_local_path: PUT_YOUR_CERT_AND_KEY_PATH_HERE
-
-# If you are using a signed key from a trusted source then you need to also change:
-# nginx_ssl_type: signed
-
-# If your files are not called `sslcert.crt` and `sslkey.key` then overwrite them:
-# nginx_ssl_cert_name: sslcert.crt
-# nginx_ssl_key_name: sslkey.key
+nginx_sites:
+  default:
+    domains: ['example.com', 'www.example.com']
+    default_server: True
+    upstreams:
+      - name: 'myapp'
+        servers: ['localhost:3000', 'localhost:3001']
+  blog:
+    domains: ['blog.example.com']
+    serve_assets:
+      enabled: False
 ```
 
 ## Installation
 
 `$ ansible-galaxy install nickjj.nginx`
 
-## Requirements
+## Ansible Galaxy
 
-Tested on ubuntu 12.04 LTS but it should work on other versions that are similar.
-
-## Troubleshooting common errors
-
-#### The server hangs when trying to connect to either http or https
-Assuming you have no syntax errors in your nginx config and the ansible run completed successfully then the most common error would be that you have a firewall blocking port 80 and/or port 443.
-
-If that's not the case then make sure your backend is working as intended and check any relevant log files.
-
-#### The ansible run finished without errors but you do not see any changes
-This is likely due to their being a syntax error in your nginx config. Check your regular expressions, paths and if you are using extra locations then make sure they are all good.
-
-Chances are you forgot a trailing semi-colon in one of the directives or some path didn't exist.
-
-You can ssh into the server manually and run `$ sudo service nginx reload`. If it fails then you can be sure there is a syntax error somewhere.
-
-#### None of my assets are being updated
-I made an assumption that you are minifying, concatinating and tagging each asset with an md5 of their contents as well as gzipping them with maximum compression before hand as part of your build process.
-
-This is common for rails apps and apps developed with other web frameworks. With that said, I automatically set them to be cached for a year and turned `gzip_static on` for just those assets.
-
-If your web application does not perform the above tasks then you should start doing them but if you're stubborn or do not have the ability to make this decision then set `nginx_assets_enabled` to false and write your own location block with `nginx_extra_locations`.
-
-## Ansible galaxy
-
-You can find it on the official [ansible galaxy](https://galaxy.ansible.com/list#/roles/856) if you want to rate it.
+You can find it on the official
+[Ansible Galaxy](https://galaxy.ansible.com/nickjj/nginx/) if you want to
+rate it.
 
 ## License
 
 MIT
+
+## Special thanks
+
+Thanks to [Maciej Delmanowski](https://twitter.com/drybjed) for helping me debug
+a few tricky issues with this role. He is the creator of [DebOps](https://debops.org/).

@@ -1,52 +1,97 @@
 ---
-- name: ensure ansible's apt_repository dependency is installed
-  apt: pkg=python-apt state=latest update_cache=true cache_valid_time={{ apt_cache_valid_time }}
-  when: nginx_configure_ppa
 
-- name: ensure nginx apt repository is up to date
-  apt_repository: repo='ppa:nginx/stable'
-  when: nginx_configure_ppa
-
-- name: ensure nginx latest stable is installed
-  apt: pkg=nginx state=latest update_cache=true cache_valid_time={{ apt_cache_valid_time }}
+- name: Install nginx
+  apt:
+    name: 'nginx'
+    state: 'present'
+  when: nginx_install_service
   notify:
-    - restart nginx
+    - Test nginx and restart
 
-- name: ensure the default site is removed
-  file: path=/etc/nginx/sites-{{ item }}/default state=absent
+- name: Create default nginx directories
+  file:
+    path: '{{ item }}'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
   with_items:
-    - enabled
-    - available
-  notify:
-    - restart nginx
+    - '/usr/share/nginx/html'
+    - '{{ nginx_letsencrypt_root }}'
+    - '/etc/nginx/sites-available'
+    - '/etc/nginx/sites-enabled'
+    - '/etc/nginx/conf.d'
+    - '/etc/nginx/ssl'
 
-- name: ensure nginx ssl directory is created
-  file: path=/etc/nginx/ssl state=directory
-  when: nginx_ssl
-
-- name: ensure nginx ssl certificate and key are created
-  copy: src={{ nginx_ssl_local_path }}/{{ item }} dest=/etc/nginx/ssl/{{ item }} mode=0600
+- name: Remove default site
+  file:
+    path: '{{ item }}'
+    state: 'absent'
   with_items:
-    - "{{ nginx_ssl_cert_name }}"
-    - "{{ nginx_ssl_key_name }}"
-  when: nginx_ssl and nginx_ssl_manage_certs
+    - '/var/www/html'
+    - '/etc/nginx/sites-enabled/default'
+    - '/etc/nginx/sites-available/default'
   notify:
-    - reload nginx
+    - Test nginx and reload
 
-- name: ensure nginx is configured
-  template: src=nginx_conf.j2 dest=/etc/nginx/nginx.conf group=root owner=root
+- name: Configure nginx
+  template:
+    src: 'etc/nginx/nginx.conf.j2'
+    dest: '/etc/nginx/nginx.conf'
+    group: 'root'
+    owner: 'root'
+    mode: '0644'
+  register: nginx_register_nginx_config
   notify:
-    - reload nginx
+    - Test nginx and reload
 
-- name: ensure sites-available is configured
-  template: src=nginx_sites-available.conf.j2 dest=/etc/nginx/sites-available/{{ nginx_upstream_name }} group=root owner=root
+- name: Generate self signed SSL certificates
+  command: >
+    openssl req
+      -new
+      -newkey rsa:4096
+      -days 365
+      -nodes
+      -x509
+      -subj "/C=US/ST=NY/L=NY/O=NA/CN=localhost"
+      -keyout /etc/nginx/ssl/{{ item.value.domains[0] }}.key
+      -out /etc/nginx/ssl/{{ item.value.domains[0] }}.pem
+  args:
+    creates: '/etc/nginx/ssl/{{ item.value.domains[0] }}.pem'
+  with_dict: '{{ nginx_sites }}'
   notify:
-    - reload nginx
+    - Test nginx and restart
 
-- name: ensure sites-available is symlinked to sites-enabled
-  file: src=/etc/nginx/sites-available/{{ nginx_upstream_name }} dest=/etc/nginx/sites-enabled/{{ nginx_upstream_name }} state=link
+- name: Generate X bit dhparam.pem file (this may take a while)
+  command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem {{ nginx_ssl_dhparam_bits }}
+  args:
+    creates: '/etc/nginx/ssl/dhparam.pem'
   notify:
-    - restart nginx
+    - Test nginx and restart
 
-- name: ensure nginx starts on a fresh reboot
-  service: name=nginx state=started enabled=yes
+- name: Configure sites-enabled (vhosts)
+  template:
+    src: 'etc/nginx/sites-available/default.conf.j2'
+    dest: '/etc/nginx/sites-available/{{ item.key }}.conf'
+    group: 'root'
+    owner: 'root'
+    mode: '0644'
+  with_dict: '{{ nginx_sites }}'
+  register: nginx_register_vhost_config
+  notify:
+    - Test nginx and reload
+
+- name: Symlink sites-available to sites-enabled
+  file:
+    src: '/etc/nginx/sites-available/{{ item.key }}.conf'
+    dest: '/etc/nginx/sites-enabled/{{ item.key }}.conf'
+    state: 'link'
+  with_dict: '{{ nginx_sites }}'
+  notify:
+    - Test nginx and restart
+
+- name: Forcefully restart nginx
+  service:
+    name: 'nginx'
+    state: 'restarted'
+  when: (nginx_register_nginx_config | changed) and (nginx_register_vhost_config | changed)

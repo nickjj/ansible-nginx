@@ -1,39 +1,50 @@
 ---
-language: "python"
-python: "2.7"
+
+sudo: required
 
 env:
-  - SITE_AND_INVENTORY="tests/test.yml -i tests/inventory"
+  - distro: 'ubuntu1604'
+    init: '/lib/systemd/systemd'
+    run_opts: '--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'
+  - distro: 'debian8'
+    init: '/lib/systemd/systemd'
+    run_opts: '--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro'
+
+services:
+  - docker
 
 before_install:
-  - "sudo apt-get update -qq"
-
-install:
-  - "pip install ansible==1.8.3"
-  - "echo '[defaults]' > ansible.cfg"
-  - "echo 'roles_path = ../' >> ansible.cfg"
-
-before_script:
-  - "cd tests && node server &"
-  - "sleep 3"
-  - "chmod 777 /tmp/testproject.sock"
-  - "openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 -subj '/C=US/ST=Foo/L=Bar/O=Baz/CN=qux.com' -keyout /tmp/sslkey.key -out /tmp/sslcert.crt"
+  - 'docker pull geerlingguy/docker-${distro}-ansible:latest'
 
 script:
-  - "ansible-playbook $SITE_AND_INVENTORY --syntax-check"
-  - "ansible-playbook $SITE_AND_INVENTORY --connection=local -vvvv"
+  - container_id=$(mktemp)
   - >
-    ansible-playbook $SITE_AND_INVENTORY --connection=local
+    docker run
+    --detach
+    --volume="${PWD}":/etc/ansible/roles/this_role:ro ${run_opts}
+    geerlingguy/docker-${distro}-ansible:latest "${init}" > "${container_id}"
+
+  - >
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm
+    ansible-playbook /etc/ansible/roles/this_role/tests/main.yml
+    --syntax-check
+  - >
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm
+    ansible-playbook /etc/ansible/roles/this_role/tests/main.yml
+
+  - idempotence=$(mktemp)
+  - >
+    docker exec "$(cat ${container_id})"
+    ansible-playbook /etc/ansible/roles/this_role/tests/main.yml
+    | tee -a ${idempotence}
+  - >
+    tail ${idempotence}
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
+
   - >
-    curl -s -o /dev/null -w "%{http_code}" http://localhost:8080
+    curl -k -s -o /dev/null -w "%{http_code}" https://localhost
     | grep -q '200'
-    && (echo 'HTTP test: pass' && exit 0)
-    || (echo 'HTTP test: fail' && exit 1)
-  - >
-    curl -k -s -o /dev/null -w "%{http_code}" https://localhost:8081
-    | grep -q '200'
-    && (echo 'HTTPs test: pass' && exit 0)
-    || (echo 'HTTPs test: fail' && exit 1)
+    && (echo 'HTTPS test: pass' && exit 0)
+    || (echo 'HTTPS test: fail' && exit 1)
