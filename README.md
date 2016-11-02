@@ -142,6 +142,9 @@ nginx_default_sites:
     #       return;
     #     }
     custom_locations: ''
+    # If you want to override the default / location's try_files, this is the
+    # place to do it. This could be useful for php-fpm based virtual hosts.
+    custom_root_location_try_files: ''
     disallow_hidden_files:
       # Block all hidden files and directories, disable at your own risk.
       enabled: True

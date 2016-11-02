@@ -100,14 +100,18 @@ server {
   }
 
   location / {
+{% if item.custom_root_location_try_files %}
+    try_files {{ item.custom_root_location_try_files }};
+{% else %}
     try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else '' }} =404;
+{% endif %}
   }
 {% if item.upstreams %}
 {% for upstream in item.upstreams %}
 
   location @{{ upstream.name }} {
-{% if nginx_upstream_proxy_settings is iterable -%}
-{% for key in nginx_upstream_proxy_settings %}
+{% if nginx_default_upstream_proxy_settings is iterable -%}
+{% for key in nginx_default_upstream_proxy_settings %}
     {{ key }};
 {% endfor %}
 {% endif %}

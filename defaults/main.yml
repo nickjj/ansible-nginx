@@ -54,11 +54,12 @@ nginx_default_sites:
       pattern: ' ~ ^/assets/'
       expires: 'max'
     custom_locations: ''
+    custom_root_location_try_files: ''
     disallow_hidden_files:
       enabled: True
     upstreams: []
 
-nginx_upstream_proxy_settings:
+nginx_default_upstream_proxy_settings:
   - 'proxy_set_header X-Real-IP $remote_addr'
   - 'proxy_set_header X-Forwarded-Proto $scheme'
   - 'proxy_set_header Host $http_host'
