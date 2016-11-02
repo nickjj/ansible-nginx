@@ -105,6 +105,10 @@ server {
 {% else %}
     try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else '' }} =404;
 {% endif %}
+{% if item.basic_auth | bool %}
+    auth_basic "{{ item.basic_auth_message }}";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+{% endif %}
   }
 {% if item.upstreams %}
 {% for upstream in item.upstreams %}

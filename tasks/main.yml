@@ -1,5 +1,11 @@
 ---
 
+- name: Install role dependencies
+  apt:
+    name: 'python-passlib'
+    state: 'present'
+  when: nginx_basic_auth
+
 - name: Install nginx
   apt:
     name: 'nginx'
@@ -68,6 +74,16 @@
     creates: '/etc/nginx/ssl/dhparam.pem'
   notify:
     - Test nginx and restart
+
+- name: Create basic auth entries
+  htpasswd:
+    path: '/etc/nginx/.htpasswd'
+    name: '{{ item.user }}'
+    password: '{{ item.password }}'
+    group: 'root'
+    owner: 'root'
+    mode: '0644'
+  with_items: '{{ nginx_basic_auth }}'
 
 - name: Configure sites-enabled (vhosts)
   template:

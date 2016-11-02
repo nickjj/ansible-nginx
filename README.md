@@ -68,6 +68,11 @@ nginx_http_gzip_disable: 'msie6'
 #     - 'auth_http_header X-Auth-Key "secret_string"'
 nginx_http_directives: []
 
+# Configure 0 or more basic auth logins, for example:
+#  nginx_basic_auth:
+#    - { user: 'nick', password: 'insecurepassword' }
+nginx_basic_auth: []
+
 # How many bits should we use to generate a dhparam?
 # Technically 2048 is 'good enough' but 4096 combined with a few other
 # things will get you to a perfect 100 A+ SSL rating, do not go below 2048.
@@ -145,6 +150,10 @@ nginx_default_sites:
     # If you want to override the default / location's try_files, this is the
     # place to do it. This could be useful for php-fpm based virtual hosts.
     custom_root_location_try_files: ''
+    # Is basic auth enabled for this virtual host?
+    basic_auth: False
+    # A 1 line message to show during the authentication required dialog.
+    basic_auth_message: 'Please sign in.'
     disallow_hidden_files:
       # Block all hidden files and directories, disable at your own risk.
       enabled: True
@@ -210,12 +219,16 @@ Let's say you want to accomplish the following goals:
 - Set up an upstream to serve a back-end using your web framework of choice
 - Load balance between 2 upstream servers
 - Configure a blog sub-domain with assets being served by a CDN
+- Password protect the blog because who needs visitors!
 
 Start by opening or creating `group_vars/app.yml` which is located relative
 to your `inventory` directory and then making it look like this:
 
 ```
 ---
+
+nginx_basic_auth:
+  - { user: 'coolperson', password: 'heylookatmeicanviewtheprivateblog' }
 
 nginx_sites:
   default:
@@ -228,6 +241,7 @@ nginx_sites:
     domains: ['blog.example.com']
     serve_assets:
       enabled: False
+    basic_auth: True
 ```
 
 ## Installation
