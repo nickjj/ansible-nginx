@@ -1,5 +1,13 @@
 # Changelog
 
+### v0.3.1
+
+*Released: November 2nd 2016*
+
+- Add basic auth support
+- Add `custom_root_location_try_files` property to virtual hosts
+- Rename `nginx_default_upstream_proxy_settings` to describe it's a default
+
 ### v0.3.0
 
 *Released: October 27nd 2016*
