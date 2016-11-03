@@ -80,6 +80,7 @@
     path: '/etc/nginx/.htpasswd'
     name: '{{ item.user }}'
     password: '{{ item.password }}'
+    crypt_scheme: 'sha512_crypt'
     group: 'root'
     owner: 'root'
     mode: '0644'
