@@ -27,6 +27,7 @@ http {
   types_hash_max_size {{ nginx_http_types_hash_max_size }};
   client_max_body_size {{ nginx_http_client_max_body_size }};
   gzip {{ nginx_http_gzip }};
+  gzip_types {{ nginx_http_gzip_types }};
   gzip_disable "{{ nginx_http_gzip_disable }}";
 
   {% if nginx_http_directives is iterable -%}

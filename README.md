@@ -60,6 +60,7 @@ nginx_http_keepalive_timeout: 60
 nginx_http_client_max_body_size: '1m'
 nginx_http_types_hash_max_size: 2048
 nginx_http_gzip: 'on'
+nginx_http_gzip_types: 'text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml image/svg'
 nginx_http_gzip_disable: 'msie6'
 
 # Add your own custom nginx.conf directives in a list.
