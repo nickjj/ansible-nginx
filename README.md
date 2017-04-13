@@ -81,6 +81,14 @@ nginx_basic_auth: []
 # Time to generate on a 512MB DO droplet: 2048 = 40 seconds, 4096 = 40 minutes.
 nginx_ssl_dhparam_bits: 2048
 
+# If supplied, override the default value for SSL certificate names. If you
+# leave this empty, then it will become the file name of the first domain listed
+# in the domains list when defining a virtual host (look in the next section).
+#
+# Setting this comes in handy if you use Let's Encrypt and want to register a
+# single certificate that has multiple domains attached to it.
+nginx_ssl_override_filename: ''
+
 # Default values for your virtual hosts and upstreams.
 nginx_default_sites:
   # Name of the virtual host and file name of the config, example: default.conf.

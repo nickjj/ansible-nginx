@@ -30,6 +30,7 @@ nginx_http_directives: []
 nginx_basic_auth: []
 
 nginx_ssl_dhparam_bits: 2048
+nginx_ssl_override_filename: ''
 
 nginx_default_sites:
   default:
