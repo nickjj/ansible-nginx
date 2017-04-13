@@ -19,6 +19,9 @@ http {
     {% endfor -%}
   {% endif %}
 
+  log_format combined_custom {{ nginx_http_access_log_format }};
+  access_log /var/log/nginx/access.log combined_custom;
+
   server_names_hash_bucket_size {{ nginx_http_server_names_hash_bucket_size }};
   server_names_hash_max_size {{ nginx_http_server_names_hash_max_size }};
   sendfile {{ nginx_http_sendfile }};

@@ -11,6 +11,10 @@ nginx_http_add_headers:
   - 'X-Frame-Options SAMEORIGIN'
   - 'X-Content-Type-Options nosniff'
   - 'X-XSS-Protection "1; mode=block"'
+nginx_http_access_log_format: |
+  '$remote_addr $remote_user $request_time $upstream_response_time $msec [$time_local] '
+  '"$request" $status $body_bytes_sent '
+  '"$http_referer" "$http_user_agent"'
 nginx_http_server_names_hash_bucket_size: 64
 nginx_http_server_names_hash_max_size: 512
 nginx_http_sendfile: 'on'
