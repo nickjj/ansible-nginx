@@ -1,5 +1,14 @@
 # Changelog
 
+### v0.4.0
+
+*Released: April 13th 2016*
+
+- Allow overriding the SSL certificate file name
+- Add custom log formatting
+- Allow customizing `try_files`
+- Use SHA512 for basic auth encryption
+
 ### v0.3.1
 
 *Released: November 2nd 2016*
