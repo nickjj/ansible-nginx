@@ -2,7 +2,7 @@
 
 ### v0.4.0
 
-*Released: April 13th 2016*
+*Released: April 13th 2017*
 
 - Allow overriding the SSL certificate file name
 - Add custom log formatting
