@@ -89,6 +89,11 @@ nginx_ssl_dhparam_bits: 2048
 # single certificate that has multiple domains attached to it.
 nginx_ssl_override_filename: ''
 
+# Should self signed certificates get generated? Some form of certificate needs
+# to be available for this role to work, so it's enabled by default. You would
+# set it to false once you have your real certificates in place.
+nginx_ssl_generate_self_signed_certs: True
+
 # Default values for your virtual hosts and upstreams.
 nginx_default_sites:
   # Name of the virtual host and file name of the config, example: default.conf.

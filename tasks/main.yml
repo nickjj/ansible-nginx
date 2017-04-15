@@ -65,6 +65,7 @@
   args:
     creates: '/etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
   with_dict: '{{ nginx_sites }}'
+  when: nginx_ssl_generate_self_signed_certs
   notify:
     - Test nginx and restart
 
