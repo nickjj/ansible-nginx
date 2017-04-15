@@ -60,10 +60,10 @@
       -nodes
       -x509
       -subj "/C=US/ST=NY/L=NY/O=NA/CN=localhost"
-      -keyout /etc/nginx/ssl/{{ item.value.domains[0] }}.key
-      -out /etc/nginx/ssl/{{ item.value.domains[0] }}.pem
+      -keyout /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.key
+      -out /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem
   args:
-    creates: '/etc/nginx/ssl/{{ item.value.domains[0] }}.pem'
+    creates: '/etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
   with_dict: '{{ nginx_sites }}'
   notify:
     - Test nginx and restart
