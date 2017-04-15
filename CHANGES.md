@@ -1,5 +1,12 @@
 # Changelog
 
+### v0.4.1
+
+*Released: April 15th 2017*
+
+- Add option to toggle the creation of self signed certs
+- Fix idempotency issue with self signed certificates
+
 ### v0.4.0
 
 *Released: April 13th 2017*
