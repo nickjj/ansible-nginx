@@ -30,7 +30,7 @@ Here's what you get with this role:
 
 Below is a list of default values along with a description of what they do.
 
-```
+```yaml
 ---
 
 # Should nginx itself be installed? You may want to set this to False in
@@ -214,7 +214,7 @@ you have a typical `site.yml` file.
 
 To use this role edit your `site.yml` file to look something like this:
 
-```
+```yaml
 ---
 
 - name: Configure app server(s)
@@ -238,7 +238,7 @@ Let's say you want to accomplish the following goals:
 Start by opening or creating `group_vars/app.yml` which is located relative
 to your `inventory` directory and then making it look like this:
 
-```
+```yaml
 ---
 
 nginx_basic_auth:
