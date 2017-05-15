@@ -103,7 +103,7 @@ server {
 {% if item.custom_root_location_try_files %}
     try_files {{ item.custom_root_location_try_files }};
 {% else %}
-    try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else '' }} =404;
+    try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else '=404' }};
 {% endif %}
 {% if item.basic_auth | bool %}
     auth_basic "{{ item.basic_auth_message }}";
