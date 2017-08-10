@@ -100,6 +100,21 @@ server {
   }
 
   location / {
+{% if item.only_upstream %}
+{% for upstream in item.upstreams %}
+    proxy_pass http://{{ upstream.name }};
+{% if nginx_default_upstream_proxy_settings is iterable -%}
+{% for key in nginx_default_upstream_proxy_settings %}
+    {{ key }};
+{% endfor %}
+{% endif %}
+{% if upstream.add_proxy_settings is defined -%}
+{% for setting in upstream.add_proxy_settings %}
+    {{ setting }};
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% else %}
 {% if item.custom_root_location_try_files %}
     try_files {{ item.custom_root_location_try_files }};
 {% else %}
@@ -108,6 +123,7 @@ server {
 {% if item.basic_auth | bool %}
     auth_basic "{{ item.basic_auth_message }}";
     auth_basic_user_file /etc/nginx/.htpasswd;
+{% endif %}
 {% endif %}
   }
 {% if item.upstreams %}
