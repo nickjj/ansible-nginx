@@ -74,6 +74,9 @@ nginx_http_directives: []
 #    - { user: 'nick', password: 'insecurepassword' }
 nginx_basic_auth: []
 
+# Where should we find the SSL certificate?
+nginx_ssl_directory: /etc/nginx/ssl
+
 # How many bits should we use to generate a dhparam?
 # Technically 2048 is 'good enough' but 4096 combined with a few other
 # things will get you to a perfect 100 A+ SSL rating, do not go below 2048.

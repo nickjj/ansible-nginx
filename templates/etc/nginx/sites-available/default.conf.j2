@@ -59,10 +59,10 @@ server {
   resolver_timeout {{ item.ssl.resolver_timeout }};
   add_header {{ item.ssl.sts_header }};
 
-  ssl_dhparam /etc/nginx/ssl/dhparam.pem;
-  ssl_certificate /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.pem;
-  ssl_certificate_key /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.key;
-  ssl_trusted_certificate /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.pem;
+  ssl_dhparam {{ nginx_ssl_directory }}/dhparam.pem;
+  ssl_certificate {{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.pem;
+  ssl_certificate_key {{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.key;
+  ssl_trusted_certificate {{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.pem;
 
 {% if item.cache_all_locations.enabled %}
   expires {{ item.cache_all_locations.duration }};

@@ -27,7 +27,7 @@
     - '/etc/nginx/sites-available'
     - '/etc/nginx/sites-enabled'
     - '/etc/nginx/conf.d'
-    - '/etc/nginx/ssl'
+    - '{{ nginx_ssl_directory }}'
 
 - name: Remove default site
   file:
@@ -60,19 +60,19 @@
       -nodes
       -x509
       -subj "/C=US/ST=NY/L=NY/O=NA/CN=localhost"
-      -keyout /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.key
-      -out /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem
+      -keyout '{{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.key'
+      -out '{{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
   args:
-    creates: '/etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
+    creates: '{{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
   with_dict: '{{ nginx_sites }}'
   when: nginx_ssl_generate_self_signed_certs
   notify:
     - Test nginx and restart
 
 - name: Generate X bit dhparam.pem file (this may take a while)
-  command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem {{ nginx_ssl_dhparam_bits }}
+  command: 'openssl dhparam -out {{ nginx_ssl_directory }}/dhparam.pem {{ nginx_ssl_dhparam_bits }}'
   args:
-    creates: '/etc/nginx/ssl/dhparam.pem'
+    creates: '{{ nginx_ssl_directory }}/dhparam.pem'
   notify:
     - Test nginx and restart
 
