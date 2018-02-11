@@ -40,6 +40,16 @@
   notify:
     - Test nginx and reload
 
+- name: Expand common_proxy.conf
+  template:
+      src: 'etc/nginx/conf.d/common_proxy.conf.j2'
+      dest: '/etc/nginx/conf.d/common_proxy.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  notify:
+      - Test nginx and reload
+
 - name: Configure nginx
   template:
     src: 'etc/nginx/nginx.conf.j2'
