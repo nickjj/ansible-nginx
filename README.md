@@ -164,6 +164,13 @@ nginx_default_sites:
     # If you want to override the default / location's try_files, this is the
     # place to do it. This could be useful for php-fpm based virtual hosts.
     custom_root_location_try_files: ''
+    # Set direct_proxy to the name of an upstream to proxy ALL requests to it
+    # (bypasses try_file directive). Example:
+    # direct_proxy: apache
+    # upstreams:
+    #     - name: apache
+    #       servers: ['apache_upstream_server']
+    direct_proxy: ''
     # Is basic auth enabled for this virtual host?
     basic_auth: False
     # A 1 line message to show during the authentication required dialog.
