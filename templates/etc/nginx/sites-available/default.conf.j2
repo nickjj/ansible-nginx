@@ -100,7 +100,10 @@ server {
   }
 
   location / {
+{% if item.custom_root_location_try_files == '' $}
+    
 {% if item.custom_root_location_try_files %}
+    include /etc/nginx/conf.d/common_proxy.conf;
     try_files {{ item.custom_root_location_try_files }};
 {% else %}
     try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else ' =404' }};
@@ -114,11 +117,7 @@ server {
 {% for upstream in item.upstreams %}
 
   location @{{ upstream.name }} {
-{% if nginx_default_upstream_proxy_settings is iterable -%}
-{% for key in nginx_default_upstream_proxy_settings %}
-    {{ key }};
-{% endfor %}
-{% endif %}
+    include /etc/nginx/conf.d/common_proxy.conf;
 {% if upstream.add_proxy_settings is defined -%}
 {% for setting in upstream.add_proxy_settings %}
     {{ setting }};
