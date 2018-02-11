@@ -25,7 +25,7 @@ server {
   }
 
   location / {
-    return 301 https://{{ item.domains[0] }}$request_uri;
+    return 301 https://$host$request_uri;
   }
 }
 
