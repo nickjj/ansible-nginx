@@ -97,6 +97,28 @@
     mode: '0644'
   with_items: '{{ nginx_basic_auth }}'
 
+- name: Expand default SSL conf file
+  template:
+      src: 'etc/nginx/conf.d/ansible_nginx/common_ssl.conf.j2'
+      dest: '/etc/nginx/conf.d/common_ssl_default.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  with_dict: '{{ nginx_default_sites }}'
+  notify:
+      - Test nginx and reload
+
+- name: Configure vhost SSL conf files
+  template:
+      src: 'etc/nginx/conf.d/ansible_nginx/common_ssl.conf.j2'
+      dest: '/etc/nginx/conf.d/common_ssl_{{ item.value.domains[0] }}.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  with_dict: '{{ nginx_sites }}'
+  notify:
+      - Test nginx and reload
+
 - name: Configure sites-enabled (vhosts)
   template:
     src: 'etc/nginx/sites-available/default.conf.j2'
