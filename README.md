@@ -63,7 +63,13 @@ nginx_http_gzip: 'on'
 nginx_http_gzip_types: 'text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml image/svg'
 nginx_http_gzip_disable: 'msie6'
 
-# Add your own custom nginx.conf directives in a list.
+# Add your own custom nginx.conf main directives in a list.
+# Example:
+#   nginx_main_directives:
+#     - 'include /etc/nginx/modules-enabled/*.conf'
+nginx_main_directives: []
+
+# Add your own custom nginx.conf http directives in a list.
 # Example:
 #   nginx_http_directives:
 #     - 'auth_http_header X-Auth-Key "secret_string"'
