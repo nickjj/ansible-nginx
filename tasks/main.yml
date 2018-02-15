@@ -27,6 +27,7 @@
     - '/etc/nginx/sites-available'
     - '/etc/nginx/sites-enabled'
     - '/etc/nginx/conf.d'
+    - '/etc/nginx/ansible-nginx-conf.d'
     - '/etc/nginx/ssl'
 
 - name: Remove default site
