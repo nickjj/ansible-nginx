@@ -34,7 +34,7 @@ server {
   listen {{ item.listen_https }} ssl;
   server_name {{ item.domains[1] }};
 
-  include /etc/nginx/conf.d/common_ssl_{{ item.domains[0] }}.conf;
+  include /etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.domains[0] }}.conf;
 
   return 301 https://{{ item.domains[0] }}$request_uri;
 }
@@ -50,7 +50,7 @@ server {
 {% endfor %}
 {% endif %}
 
-  include /etc/nginx/conf.d/common_ssl_{{ item.domains[0] }}.conf;
+  include /etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.domains[0] }}.conf;
 
 {% if item.cache_all_locations.enabled %}
   expires {{ item.cache_all_locations.duration }};
