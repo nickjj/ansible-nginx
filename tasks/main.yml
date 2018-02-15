@@ -42,8 +42,8 @@
 
 - name: Expand common_proxy.conf
   template:
-      src: 'etc/nginx/conf.d/common_proxy.conf.j2'
-      dest: '/etc/nginx/conf.d/common_proxy.conf'
+      src: 'etc/nginx/ansible-nginx-conf.d/common_proxy.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_proxy.conf'
       group: 'root'
       owner: 'root'
       mode: '0644'
