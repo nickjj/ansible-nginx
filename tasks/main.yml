@@ -89,8 +89,8 @@
 
 - name: Expand default SSL conf file
   template:
-      src: 'etc/nginx/conf.d/ansible_nginx/common_ssl.conf.j2'
-      dest: '/etc/nginx/conf.d/common_ssl_default.conf'
+      src: 'etc/nginx/ansible-nginx-conf.d/common_ssl.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_ssl_default.conf'
       group: 'root'
       owner: 'root'
       mode: '0644'
@@ -100,8 +100,8 @@
 
 - name: Configure vhost SSL conf files
   template:
-      src: 'etc/nginx/conf.d/ansible_nginx/common_ssl.conf.j2'
-      dest: '/etc/nginx/conf.d/common_ssl_{{ item.value.domains[0] }}.conf'
+      src: 'etc/nginx/ansible-nginx-conf.d/common_ssl.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.value.domains[0] }}.conf'
       group: 'root'
       owner: 'root'
       mode: '0644'
