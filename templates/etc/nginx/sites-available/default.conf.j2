@@ -100,7 +100,7 @@ server {
   }
 
   location / {
-    include /etc/nginx/conf.d/common_proxy.conf;
+    include /etc/nginx/ansible-nginx-conf.d/common_proxy.conf;
 {% if item.direct_proxy and item.upstreams -%}
   {% set upstream = item.upstreams|selectattr('name', '==', item.direct_proxy)|first -%}
   {% if upstream -%}
@@ -128,7 +128,7 @@ server {
 {% for upstream in item.upstreams %}
 
   location @{{ upstream.name }} {
-    include /etc/nginx/conf.d/common_proxy.conf;
+    include /etc/nginx/ansible-nginx-conf.d/common_proxy.conf;
 {% if upstream.add_proxy_settings is defined -%}
 {% for setting in upstream.add_proxy_settings %}
     {{ setting }};
