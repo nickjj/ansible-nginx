@@ -34,6 +34,7 @@ nginx_ssl_generate_self_signed_certs: True
 
 nginx_default_sites:
   default:
+    only_upstream: False
     domains: []
     default_server: False
     listen_http: 80
