@@ -1,0 +1,11 @@
+---
+driver:
+  name: docker
+docker:
+  containers:
+    - name: ansible-nginx
+      image: solita/ubuntu-systemd
+      image_version: latest
+      privileged: True
+verifier:
+  name: testinfra

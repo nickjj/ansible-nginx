@@ -1,5 +1,10 @@
 ---
 
+- name: Install system dependencies
+  apt:
+    name: 'openssl'
+    state: 'present'
+
 - name: Install role dependencies
   apt:
     name: 'python-passlib'
