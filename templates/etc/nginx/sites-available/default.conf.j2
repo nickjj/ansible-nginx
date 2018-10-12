@@ -100,25 +100,35 @@ server {
   }
 
   location / {
-{% if item.custom_root_location_try_files %}
+    include /etc/nginx/ansible-nginx-conf.d/common_proxy.conf;
+{% if item.direct_proxy and item.upstreams -%}
+  {% set upstream = item.upstreams|selectattr('name', '==', item.direct_proxy)|first -%}
+  {% if upstream -%}
+    {% if upstream.add_proxy_settings is defined -%}
+      {% for setting in upstream.add_proxy_settings %}
+        {{ setting }};
+
+      {% endfor %}
+    {% endif %}
+    proxy_pass http://{{ upstream.name }};
+  {% endif %}
+{% elif item.custom_root_location_try_files %}
     try_files {{ item.custom_root_location_try_files }};
 {% else %}
-    try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else '' }} =404;
+    try_files $uri $uri.html $uri/{{ (' @' + item.upstreams[0].name) if (item.upstreams) else ' =404' }};
 {% endif %}
+
 {% if item.basic_auth | bool %}
     auth_basic "{{ item.basic_auth_message }}";
     auth_basic_user_file /etc/nginx/.htpasswd;
 {% endif %}
   }
+
 {% if item.upstreams %}
 {% for upstream in item.upstreams %}
 
   location @{{ upstream.name }} {
-{% if nginx_default_upstream_proxy_settings is iterable -%}
-{% for key in nginx_default_upstream_proxy_settings %}
-    {{ key }};
-{% endfor %}
-{% endif %}
+    include /etc/nginx/ansible-nginx-conf.d/common_proxy.conf;
 {% if upstream.add_proxy_settings is defined -%}
 {% for setting in upstream.add_proxy_settings %}
     {{ setting }};
