@@ -14,7 +14,7 @@ upstream {{ upstream.name }} {
 {% endif %}
 
 server {
-  listen {{ item.listen_http }}{{ ' default deferred' if item.default_server else '' }};
+  listen {{ item.listen_http }}{{ ' default_server deferred' if item.default_server else '' }};
   server_name {{ item.domains | join(' ') }};
   root {{ nginx_letsencrypt_root }};
 
