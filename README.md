@@ -63,7 +63,13 @@ nginx_http_gzip: 'on'
 nginx_http_gzip_types: 'text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml image/svg'
 nginx_http_gzip_disable: 'msie6'
 
-# Add your own custom nginx.conf directives in a list.
+# Add your own custom nginx.conf main directives in a list.
+# Example:
+#   nginx_main_directives:
+#     - 'include /etc/nginx/modules-enabled/*.conf'
+nginx_main_directives: []
+
+# Add your own custom nginx.conf http directives in a list.
 # Example:
 #   nginx_http_directives:
 #     - 'auth_http_header X-Auth-Key "secret_string"'
@@ -73,6 +79,9 @@ nginx_http_directives: []
 #  nginx_basic_auth:
 #    - { user: 'nick', password: 'insecurepassword' }
 nginx_basic_auth: []
+
+# Where should we find the SSL certificate?
+nginx_ssl_directory: /etc/nginx/ssl
 
 # How many bits should we use to generate a dhparam?
 # Technically 2048 is 'good enough' but 4096 combined with a few other
@@ -165,6 +174,13 @@ nginx_default_sites:
     # If you want to override the default / location's try_files, this is the
     # place to do it. This could be useful for php-fpm based virtual hosts.
     custom_root_location_try_files: ''
+    # Set direct_proxy to the name of an upstream to proxy ALL requests to it
+    # (bypasses try_file directive). Example:
+    # direct_proxy: apache
+    # upstreams:
+    #     - name: apache
+    #       servers: ['apache_upstream_server']
+    direct_proxy: ''
     # Is basic auth enabled for this virtual host?
     basic_auth: False
     # A 1 line message to show during the authentication required dialog.

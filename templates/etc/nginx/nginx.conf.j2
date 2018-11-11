@@ -4,6 +4,14 @@ user {{ nginx_user }};
 worker_processes {{ nginx_worker_processes }};
 worker_rlimit_nofile {{ nginx_worker_rlimit_nofile }};
 
+
+{% if nginx_main_directives is iterable -%}
+{% for key in nginx_main_directives %}
+  {{ key }};
+{% endfor %}
+{% endif %}
+
+
 events {
   worker_connections {{ nginx_events_worker_connections }};
 }
