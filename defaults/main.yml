@@ -25,10 +25,12 @@ nginx_http_types_hash_max_size: 2048
 nginx_http_gzip: 'on'
 nginx_http_gzip_types: 'text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml image/svg'
 nginx_http_gzip_disable: 'msie6'
+nginx_main_directives: []
 nginx_http_directives: []
 
 nginx_basic_auth: []
 
+nginx_ssl_directory: /etc/nginx/ssl
 nginx_ssl_dhparam_bits: 2048
 nginx_ssl_generate_self_signed_certs: True
 
@@ -63,6 +65,7 @@ nginx_default_sites:
       expires: 'max'
     custom_locations: ''
     custom_root_location_try_files: ''
+    direct_proxy: ''
     basic_auth: False
     basic_auth_message: 'Please sign in'
     disallow_hidden_files:

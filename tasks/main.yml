@@ -27,7 +27,8 @@
     - '/etc/nginx/sites-available'
     - '/etc/nginx/sites-enabled'
     - '/etc/nginx/conf.d'
-    - '/etc/nginx/ssl'
+    - '/etc/nginx/ansible-nginx-conf.d'
+    - '{{ nginx_ssl_directory }}'
 
 - name: Remove default site
   file:
@@ -39,6 +40,16 @@
     - '/etc/nginx/sites-available/default'
   notify:
     - Test nginx and reload
+
+- name: Expand common_proxy.conf
+  template:
+      src: 'etc/nginx/ansible-nginx-conf.d/common_proxy.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_proxy.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  notify:
+      - Test nginx and reload
 
 - name: Configure nginx
   template:
@@ -60,19 +71,19 @@
       -nodes
       -x509
       -subj "/C=US/ST=NY/L=NY/O=NA/CN=localhost"
-      -keyout /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.key
-      -out /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem
+      -keyout '{{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.key'
+      -out '{{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
   args:
-    creates: '/etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
+    creates: '{{ nginx_ssl_directory }}/{{ nginx_ssl_override_filename | default(item.value.domains[0]) }}.pem'
   with_dict: '{{ nginx_sites }}'
   when: nginx_ssl_generate_self_signed_certs
   notify:
     - Test nginx and restart
 
 - name: Generate X bit dhparam.pem file (this may take a while)
-  command: openssl dhparam -out /etc/nginx/ssl/dhparam.pem {{ nginx_ssl_dhparam_bits }}
+  command: 'openssl dhparam -out {{ nginx_ssl_directory }}/dhparam.pem {{ nginx_ssl_dhparam_bits }}'
   args:
-    creates: '/etc/nginx/ssl/dhparam.pem'
+    creates: '{{ nginx_ssl_directory }}/dhparam.pem'
   notify:
     - Test nginx and restart
 
@@ -86,6 +97,28 @@
     owner: 'root'
     mode: '0644'
   with_items: '{{ nginx_basic_auth }}'
+
+- name: Expand default SSL conf file
+  template:
+      src: 'etc/nginx/ansible-nginx-conf.d/common_ssl.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_ssl_default.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  with_dict: '{{ nginx_default_sites }}'
+  notify:
+      - Test nginx and reload
+
+- name: Configure vhost SSL conf files
+  template:
+      src: 'etc/nginx/ansible-nginx-conf.d/common_ssl.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.value.domains[0] }}.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  with_dict: '{{ nginx_sites }}'
+  notify:
+      - Test nginx and reload
 
 - name: Configure sites-enabled (vhosts)
   template:
