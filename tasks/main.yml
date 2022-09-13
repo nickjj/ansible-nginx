@@ -112,4 +112,4 @@
   service:
     name: 'nginx'
     state: 'restarted'
-  when: (nginx_register_nginx_config | changed) and (nginx_register_vhost_config | changed)
+  when: (nginx_register_nginx_config is changed) or (nginx_register_vhost_config is changed)
