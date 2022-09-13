@@ -27,6 +27,7 @@
     - '/etc/nginx/sites-available'
     - '/etc/nginx/sites-enabled'
     - '/etc/nginx/conf.d'
+    - '/etc/nginx/ansible-nginx-conf.d'
     - '/etc/nginx/ssl'
 
 - name: Remove default site
@@ -39,6 +40,16 @@
     - '/etc/nginx/sites-available/default'
   notify:
     - Test nginx and reload
+
+- name: Expand common_proxy.conf
+  template:
+      src: 'etc/nginx/ansible-nginx-conf.d/common_proxy.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_proxy.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  notify:
+      - Test nginx and reload
 
 - name: Configure nginx
   template:

@@ -63,6 +63,7 @@ nginx_default_sites:
       expires: 'max'
     custom_locations: ''
     custom_root_location_try_files: ''
+    direct_proxy: ''
     basic_auth: False
     basic_auth_message: 'Please sign in'
     disallow_hidden_files:
