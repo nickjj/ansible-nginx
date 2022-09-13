@@ -34,6 +34,8 @@ server {
   listen {{ item.listen_https }} ssl;
   server_name {{ item.domains[1] }};
 
+  include /etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.domains[0] }}.conf;
+
   return 301 https://{{ item.domains[0] }}$request_uri;
 }
 {% endif %}
@@ -48,21 +50,7 @@ server {
 {% endfor %}
 {% endif %}
 
-  ssl_protocols {{ item.ssl.protocols }};
-  ssl_ciphers "{{ item.ssl.ciphers }}";
-  ssl_prefer_server_ciphers {{ item.ssl.prefer_server_ciphers }};
-  ssl_session_cache {{ item.ssl.session_cache }};
-  ssl_session_timeout {{ item.ssl.session_timeout }};
-  ssl_stapling {{ item.ssl.ssl_stapling }};
-  ssl_stapling_verify {{ item.ssl.ssl_stapling_verify }};
-  resolver {{ item.ssl.resolver }};
-  resolver_timeout {{ item.ssl.resolver_timeout }};
-  add_header {{ item.ssl.sts_header }};
-
-  ssl_dhparam /etc/nginx/ssl/dhparam.pem;
-  ssl_certificate /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.pem;
-  ssl_certificate_key /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.key;
-  ssl_trusted_certificate /etc/nginx/ssl/{{ nginx_ssl_override_filename | default(item.domains[0]) }}.pem;
+  include /etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.domains[0] }}.conf;
 
 {% if item.cache_all_locations.enabled %}
   expires {{ item.cache_all_locations.duration }};

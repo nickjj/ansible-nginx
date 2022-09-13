@@ -27,6 +27,7 @@
     - '/etc/nginx/sites-available'
     - '/etc/nginx/sites-enabled'
     - '/etc/nginx/conf.d'
+    - '/etc/nginx/ansible-nginx-conf.d'
     - '/etc/nginx/ssl'
 
 - name: Remove default site
@@ -86,6 +87,28 @@
     owner: 'root'
     mode: '0644'
   with_items: '{{ nginx_basic_auth }}'
+
+- name: Expand default SSL conf file
+  template:
+      src: 'etc/nginx/ansible-nginx-conf.d/common_ssl.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_ssl_default.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  with_dict: '{{ nginx_default_sites }}'
+  notify:
+      - Test nginx and reload
+
+- name: Configure vhost SSL conf files
+  template:
+      src: 'etc/nginx/ansible-nginx-conf.d/common_ssl.conf.j2'
+      dest: '/etc/nginx/ansible-nginx-conf.d/common_ssl_{{ item.value.domains[0] }}.conf'
+      group: 'root'
+      owner: 'root'
+      mode: '0644'
+  with_dict: '{{ nginx_sites }}'
+  notify:
+      - Test nginx and reload
 
 - name: Configure sites-enabled (vhosts)
   template:
